@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<Anchors>
+		<anchor>
+			<id>1</id>
+			<X>0</X>
+			<Y>0</Y>
+			
+		</anchor>
+		<anchor>
+			<id>2</id>
+			<X>6</X>
+			<Y>0</Y>
+			
+		</anchor>
+		<anchor>
+			<id>3</id>
+			<X>6</X>
+			<Y>9</Y>
+			
+		</anchor>
+		<anchor>
+			<id>4</id>
+			<X>0</X>
+			<Y>9</Y>
+			
+		</anchor>
+	</Anchors>
+	
+	<Communication>
+		<Port>COM18</Port>
+		<BaudRate>56700</BaudRate>
+	</Communication>
+	
+</configuration>
