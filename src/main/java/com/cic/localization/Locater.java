@@ -3,6 +3,7 @@ package com.cic.localization;
 import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,6 +13,7 @@ public class Locater implements OnDataArrvialListener{
 	Map<Integer,LocationCalculator> locationCaluators=null;
 	Map<Integer, Map<Integer,Double>> lastDistances=null; 
 	SerialController serialController=null;
+	LocationEventListener el=null;
 	public Locater()
 	{
 		
@@ -41,6 +43,15 @@ public class Locater implements OnDataArrvialListener{
 		}
 		LocationCalculator lc=locationCaluators.get(id);
 		Point2D result=lc.calculate(distanceMap, gyro[2]);
+		writeResultToDatabase(id,distanceMap,gyro,result);
+		if(el!=null)
+		{
+			if(isInDangerousZone(result))
+			{
+				el.onLocationChange(id,distanceMap,gyro,result,true);
+			}
+			el.onLocationChange(id,distanceMap,gyro,result,false);
+		}
 	}
 	
 	private void writeResultToDatabase(int id, Map<Integer, Double> distanceMap,double[] gyro,Point2D p)
@@ -48,6 +59,21 @@ public class Locater implements OnDataArrvialListener{
 		
 	}
 	
+	private boolean isInDangerousZone(Point2D p)
+	{
+		List<List<Point2D>> zones=Config.dangerousZones;
+		for(int i=0;i<zones.size();i++)
+		{
+			List<Point2D> inner=zones.get(i);
+			Point2D lpoint=inner.get(0);
+			Point2D rpoint=inner.get(1);
+			if(p.getX()>lpoint.getX()&&p.getY()>lpoint.getY()&&p.getX()<rpoint.getX()&&p.getY()<rpoint.getY())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	public void lowpassFilter(Map<Integer,Double> last,Map<Integer,Double> now)
 	{
@@ -63,6 +89,14 @@ public class Locater implements OnDataArrvialListener{
 			else if(lvalue-nvalue>1) nvalue=lvalue-1;
 			now.put(tid, nvalue);
 		}
+	}
+
+	public LocationEventListener getLocationEventListener() {
+		return el;
+	}
+
+	public void setLocationEventListener(LocationEventListener el) {
+		this.el = el;
 	}
 	
 }

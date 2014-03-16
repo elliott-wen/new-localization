@@ -9,27 +9,35 @@
 		</anchor>
 		<anchor>
 			<id>2</id>
-			<X>6</X>
+			<X>9</X>
 			<Y>0</Y>
 			
 		</anchor>
 		<anchor>
 			<id>3</id>
-			<X>6</X>
+			<X>9</X>
 			<Y>9</Y>
 			
 		</anchor>
 		<anchor>
 			<id>4</id>
 			<X>0</X>
-			<Y>9</Y>
-			
+			<Y>9</Y>	
 		</anchor>
 	</Anchors>
-	
 	<Communication>
 		<Port>COM18</Port>
 		<BaudRate>56700</BaudRate>
 	</Communication>
-	
+	<DangerousZones>
+		<zone>
+			<LX>0</LX>
+			<LY>0</LY>
+			<RX>3</RX>
+			<RY>3</RY>
+		</zone>
+	</DangerousZones>
+	<Chart>
+		<bgimg>c:/bg.jpg</bgimg>
+	</Chart>
 </configuration>

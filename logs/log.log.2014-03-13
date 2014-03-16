@@ -1,0 +1,150 @@
+2014-03-13 12:47:52  - [ INFO ]  No config file specified, use default config file
+2014-03-13 12:47:52  - [ ERROR ]  Error when loading config file
+java.io.FileNotFoundException: src\main\resources\config.xml (系统找不到指定的文件。)
+	at java.io.FileInputStream.open(Native Method)
+	at java.io.FileInputStream.<init>(Unknown Source)
+	at com.cic.localization.Config.loadConfig(Config.java:27)
+	at com.cic.localization.App.loadConfig(App.java:34)
+	at com.cic.localization.App.main(App.java:20)
+2014-03-13 12:52:16  - [ INFO ]  No config file specified, use default config file
+2014-03-13 12:52:16  - [ INFO ]  Loading Communication Detail
+2014-03-13 12:52:16  - [ INFO ]  Use port:COM18
+2014-03-13 12:52:16  - [ INFO ]  Port BaudRate:56700
+2014-03-13 12:52:16  - [ INFO ]  Loading Anchor Details
+2014-03-13 12:52:16  - [ INFO ]  Found an anchor=》ID=1 X=0.0 Y=0.0
+2014-03-13 12:52:16  - [ INFO ]  Found an anchor=》ID=2 X=6.0 Y=0.0
+2014-03-13 12:52:16  - [ INFO ]  Found an anchor=》ID=3 X=6.0 Y=9.0
+2014-03-13 12:52:16  - [ INFO ]  Found an anchor=》ID=4 X=0.0 Y=9.0
+2014-03-13 16:21:12  - [ INFO ]  No config file specified, use default config file
+2014-03-13 16:21:12  - [ INFO ]  Loading Communication Detail
+2014-03-13 16:21:12  - [ INFO ]  Use port:COM18
+2014-03-13 16:21:12  - [ INFO ]  Port BaudRate:56700
+2014-03-13 16:21:12  - [ INFO ]  Loading Anchor Details
+2014-03-13 16:21:12  - [ INFO ]  Found an anchor=》ID=1 X=0.0 Y=0.0
+2014-03-13 16:21:12  - [ INFO ]  Found an anchor=》ID=2 X=6.0 Y=0.0
+2014-03-13 16:21:12  - [ INFO ]  Found an anchor=》ID=3 X=6.0 Y=9.0
+2014-03-13 16:21:12  - [ INFO ]  Found an anchor=》ID=4 X=0.0 Y=9.0
+2014-03-13 16:21:13  - [ ERROR ]  Open Communication Failed
+gnu.io.NoSuchPortException
+	at gnu.io.CommPortIdentifier.getPortIdentifier(CommPortIdentifier.java:269)
+	at com.cic.localization.SerialController.initCommunication(SerialController.java:24)
+	at com.cic.localization.Locater.initLocater(Locater.java:26)
+	at com.cic.localization.App.main(App.java:22)
+2014-03-13 16:21:13  - [ ERROR ]  Ready to quit
+2014-03-13 16:21:20  - [ INFO ]  No config file specified, use default config file
+2014-03-13 16:21:20  - [ INFO ]  Loading Communication Detail
+2014-03-13 16:21:20  - [ INFO ]  Use port:COM18
+2014-03-13 16:21:20  - [ INFO ]  Port BaudRate:56700
+2014-03-13 16:21:20  - [ INFO ]  Loading Anchor Details
+2014-03-13 16:21:20  - [ INFO ]  Found an anchor=》ID=1 X=0.0 Y=0.0
+2014-03-13 16:21:20  - [ INFO ]  Found an anchor=》ID=2 X=6.0 Y=0.0
+2014-03-13 16:21:20  - [ INFO ]  Found an anchor=》ID=3 X=6.0 Y=9.0
+2014-03-13 16:21:20  - [ INFO ]  Found an anchor=》ID=4 X=0.0 Y=9.0
+2014-03-13 16:22:16  - [ INFO ]  No config file specified, use default config file
+2014-03-13 16:22:16  - [ INFO ]  Loading Communication Detail
+2014-03-13 16:22:16  - [ INFO ]  Use port:COM18
+2014-03-13 16:22:16  - [ INFO ]  Port BaudRate:56700
+2014-03-13 16:22:16  - [ INFO ]  Loading Anchor Details
+2014-03-13 16:22:16  - [ INFO ]  Found an anchor=》ID=1 X=0.0 Y=0.0
+2014-03-13 16:22:16  - [ INFO ]  Found an anchor=》ID=2 X=6.0 Y=0.0
+2014-03-13 16:22:16  - [ INFO ]  Found an anchor=》ID=3 X=6.0 Y=9.0
+2014-03-13 16:22:16  - [ INFO ]  Found an anchor=》ID=4 X=0.0 Y=9.0
+2014-03-13 16:22:42  - [ INFO ]  No config file specified, use default config file
+2014-03-13 16:22:42  - [ INFO ]  Loading Communication Detail
+2014-03-13 16:22:42  - [ INFO ]  Use port:COM18
+2014-03-13 16:22:42  - [ INFO ]  Port BaudRate:56700
+2014-03-13 16:22:42  - [ INFO ]  Loading Anchor Details
+2014-03-13 16:22:42  - [ INFO ]  Found an anchor=》ID=1 X=0.0 Y=0.0
+2014-03-13 16:22:42  - [ INFO ]  Found an anchor=》ID=2 X=6.0 Y=0.0
+2014-03-13 16:22:42  - [ INFO ]  Found an anchor=》ID=3 X=6.0 Y=9.0
+2014-03-13 16:22:42  - [ INFO ]  Found an anchor=》ID=4 X=0.0 Y=9.0
+2014-03-13 16:25:45  - [ INFO ]  No config file specified, use default config file
+2014-03-13 16:25:45  - [ INFO ]  Loading Communication Detail
+2014-03-13 16:25:45  - [ INFO ]  Use port:COM18
+2014-03-13 16:25:45  - [ INFO ]  Port BaudRate:56700
+2014-03-13 16:25:45  - [ INFO ]  Loading Anchor Details
+2014-03-13 16:25:45  - [ INFO ]  Found an anchor=》ID=1 X=0.0 Y=0.0
+2014-03-13 16:25:45  - [ INFO ]  Found an anchor=》ID=2 X=6.0 Y=0.0
+2014-03-13 16:25:45  - [ INFO ]  Found an anchor=》ID=3 X=6.0 Y=9.0
+2014-03-13 16:25:45  - [ INFO ]  Found an anchor=》ID=4 X=0.0 Y=9.0
+2014-03-13 16:29:21  - [ INFO ]  No config file specified, use default config file
+2014-03-13 16:29:21  - [ INFO ]  Loading Communication Detail
+2014-03-13 16:29:21  - [ INFO ]  Use port:COM18
+2014-03-13 16:29:21  - [ INFO ]  Port BaudRate:56700
+2014-03-13 16:29:21  - [ INFO ]  Loading Anchor Details
+2014-03-13 16:29:21  - [ INFO ]  Found an anchor=》ID=1 X=0.0 Y=0.0
+2014-03-13 16:29:21  - [ INFO ]  Found an anchor=》ID=2 X=6.0 Y=0.0
+2014-03-13 16:29:21  - [ INFO ]  Found an anchor=》ID=3 X=6.0 Y=9.0
+2014-03-13 16:29:21  - [ INFO ]  Found an anchor=》ID=4 X=0.0 Y=9.0
+2014-03-13 16:32:18  - [ INFO ]  No config file specified, use default config file
+2014-03-13 16:32:18  - [ INFO ]  Loading Communication Detail
+2014-03-13 16:32:18  - [ INFO ]  Use port:COM18
+2014-03-13 16:32:18  - [ INFO ]  Port BaudRate:56700
+2014-03-13 16:32:18  - [ INFO ]  Loading Anchor Details
+2014-03-13 16:32:18  - [ INFO ]  Found an anchor=》ID=1 X=0.0 Y=0.0
+2014-03-13 16:32:18  - [ INFO ]  Found an anchor=》ID=2 X=6.0 Y=0.0
+2014-03-13 16:32:18  - [ INFO ]  Found an anchor=》ID=3 X=6.0 Y=9.0
+2014-03-13 16:32:18  - [ INFO ]  Found an anchor=》ID=4 X=0.0 Y=9.0
+2014-03-13 16:46:39  - [ INFO ]  No config file specified, use default config file
+2014-03-13 16:46:39  - [ INFO ]  Loading Communication Detail
+2014-03-13 16:46:39  - [ INFO ]  Use port:COM18
+2014-03-13 16:46:39  - [ INFO ]  Port BaudRate:56700
+2014-03-13 16:46:39  - [ INFO ]  Loading Anchor Details
+2014-03-13 16:46:39  - [ INFO ]  Found an anchor=》ID=1 X=0.0 Y=0.0
+2014-03-13 16:46:39  - [ INFO ]  Found an anchor=》ID=2 X=6.0 Y=0.0
+2014-03-13 16:46:39  - [ INFO ]  Found an anchor=》ID=3 X=6.0 Y=9.0
+2014-03-13 16:46:39  - [ INFO ]  Found an anchor=》ID=4 X=0.0 Y=9.0
+2014-03-13 16:49:21  - [ INFO ]  No config file specified, use default config file
+2014-03-13 16:49:21  - [ INFO ]  Loading Communication Detail
+2014-03-13 16:49:21  - [ INFO ]  Use port:COM18
+2014-03-13 16:49:21  - [ INFO ]  Port BaudRate:56700
+2014-03-13 16:49:21  - [ INFO ]  Loading Anchor Details
+2014-03-13 16:49:21  - [ INFO ]  Found an anchor=》ID=1 X=0.0 Y=0.0
+2014-03-13 16:49:21  - [ INFO ]  Found an anchor=》ID=2 X=6.0 Y=0.0
+2014-03-13 16:49:21  - [ INFO ]  Found an anchor=》ID=3 X=6.0 Y=9.0
+2014-03-13 16:49:21  - [ INFO ]  Found an anchor=》ID=4 X=0.0 Y=9.0
+2014-03-13 16:50:36  - [ INFO ]  No config file specified, use default config file
+2014-03-13 16:50:36  - [ INFO ]  Loading Communication Detail
+2014-03-13 16:50:36  - [ INFO ]  Use port:COM18
+2014-03-13 16:50:36  - [ INFO ]  Port BaudRate:56700
+2014-03-13 16:50:36  - [ INFO ]  Loading Anchor Details
+2014-03-13 16:50:36  - [ INFO ]  Found an anchor=》ID=1 X=0.0 Y=0.0
+2014-03-13 16:50:36  - [ INFO ]  Found an anchor=》ID=2 X=6.0 Y=0.0
+2014-03-13 16:50:36  - [ INFO ]  Found an anchor=》ID=3 X=6.0 Y=9.0
+2014-03-13 16:50:36  - [ INFO ]  Found an anchor=》ID=4 X=0.0 Y=9.0
+2014-03-13 16:51:24  - [ INFO ]  No config file specified, use default config file
+2014-03-13 16:51:24  - [ INFO ]  Loading Communication Detail
+2014-03-13 16:51:24  - [ INFO ]  Use port:COM18
+2014-03-13 16:51:24  - [ INFO ]  Port BaudRate:56700
+2014-03-13 16:51:24  - [ INFO ]  Loading Anchor Details
+2014-03-13 16:51:24  - [ INFO ]  Found an anchor=》ID=1 X=0.0 Y=0.0
+2014-03-13 16:51:24  - [ INFO ]  Found an anchor=》ID=2 X=6.0 Y=0.0
+2014-03-13 16:51:24  - [ INFO ]  Found an anchor=》ID=3 X=6.0 Y=9.0
+2014-03-13 16:51:24  - [ INFO ]  Found an anchor=》ID=4 X=0.0 Y=9.0
+2014-03-13 16:52:09  - [ INFO ]  No config file specified, use default config file
+2014-03-13 16:52:09  - [ INFO ]  Loading Communication Detail
+2014-03-13 16:52:09  - [ INFO ]  Use port:COM18
+2014-03-13 16:52:09  - [ INFO ]  Port BaudRate:56700
+2014-03-13 16:52:09  - [ INFO ]  Loading Anchor Details
+2014-03-13 16:52:09  - [ INFO ]  Found an anchor=》ID=1 X=0.0 Y=0.0
+2014-03-13 16:52:09  - [ INFO ]  Found an anchor=》ID=2 X=6.0 Y=0.0
+2014-03-13 16:52:09  - [ INFO ]  Found an anchor=》ID=3 X=6.0 Y=9.0
+2014-03-13 16:52:09  - [ INFO ]  Found an anchor=》ID=4 X=0.0 Y=9.0
+2014-03-13 16:54:07  - [ INFO ]  No config file specified, use default config file
+2014-03-13 16:54:07  - [ INFO ]  Loading Communication Detail
+2014-03-13 16:54:07  - [ INFO ]  Use port:COM18
+2014-03-13 16:54:07  - [ INFO ]  Port BaudRate:56700
+2014-03-13 16:54:07  - [ INFO ]  Loading Anchor Details
+2014-03-13 16:54:07  - [ INFO ]  Found an anchor=》ID=1 X=0.0 Y=0.0
+2014-03-13 16:54:07  - [ INFO ]  Found an anchor=》ID=2 X=6.0 Y=0.0
+2014-03-13 16:54:07  - [ INFO ]  Found an anchor=》ID=3 X=6.0 Y=9.0
+2014-03-13 16:54:07  - [ INFO ]  Found an anchor=》ID=4 X=0.0 Y=9.0
+2014-03-13 17:02:52  - [ INFO ]  No config file specified, use default config file
+2014-03-13 17:02:52  - [ INFO ]  Loading Communication Detail
+2014-03-13 17:02:52  - [ INFO ]  Use port:COM18
+2014-03-13 17:02:52  - [ INFO ]  Port BaudRate:56700
+2014-03-13 17:02:52  - [ INFO ]  Loading Anchor Details
+2014-03-13 17:02:52  - [ INFO ]  Found an anchor=》ID=1 X=0.0 Y=0.0
+2014-03-13 17:02:52  - [ INFO ]  Found an anchor=》ID=2 X=6.0 Y=0.0
+2014-03-13 17:02:52  - [ INFO ]  Found an anchor=》ID=3 X=6.0 Y=9.0
+2014-03-13 17:02:52  - [ INFO ]  Found an anchor=》ID=4 X=0.0 Y=9.0

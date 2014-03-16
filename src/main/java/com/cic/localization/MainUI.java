@@ -1,6 +1,8 @@
 package com.cic.localization;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.Point2D;
+import java.util.Map;
 
 import com.cloudgarden.layout.AnchorConstraint;
 import com.cloudgarden.layout.AnchorLayout;
@@ -13,6 +15,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
@@ -38,13 +41,15 @@ import javax.swing.SwingUtilities;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
-public class MainUI extends javax.swing.JFrame {
+public class MainUI extends javax.swing.JFrame implements LocationEventListener{
 	private JLabel jLabel1;
 	private JMenu jMenu1;
 	private JMenuBar jMenuBar1;
 	private JLabel jLabel2;
 	private JLabel jLabel3;
-	private JPanel jPanel1;
+	private JMenu jMenu3;
+	private JMenu jMenu2;
+
 	private JTable jTable2;
 	private JTextArea jTextArea1;
 	private JTable jTable1;
@@ -90,7 +95,7 @@ public class MainUI extends javax.swing.JFrame {
 				//lChart.getChartPanel();
 
 				//jPanel1 = new JPanel();
-				getContentPane().add(lChart.getChartPanel(), new AnchorConstraint(17, 803, 993, 4, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(lChart.initPanel(), new AnchorConstraint(17, 803, 993, 4, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				//jPanel1.setPreferredSize(new java.awt.Dimension(812, 690));
 				//jPanel1.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 			}
@@ -104,13 +109,17 @@ public class MainUI extends javax.swing.JFrame {
 			{
 				TableModel jTable1Model = 
 						new DefaultTableModel(
-								new String[][] { { "One", "Two" }, { "Three", "Four" } },
-								new String[] { "Column 1", "Column 2" });
+								new String[][] { { "1", "Unknown" }, },
+								new String[] { "TagID", "Location" });
 				jTable1 = new JTable();
-				getContentPane().add(jTable1, new AnchorConstraint(78, 1000, 365, 815, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				JScrollPane scrollPane = new JScrollPane(jTable1);
+				getContentPane().add(scrollPane, new AnchorConstraint(78, 1000, 365, 815, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jTable1.setModel(jTable1Model);
+				
 				jTable1.setPreferredSize(new java.awt.Dimension(188, 203));
 				jTable1.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+				jTable1.setUpdateSelectionOnSort(false);
+				jTable1.setVerifyInputWhenFocusTarget(false);
 			}
 			{
 				jLabel1 = new JLabel();
@@ -127,16 +136,17 @@ public class MainUI extends javax.swing.JFrame {
 			{
 				jLabel3 = new JLabel();
 				getContentPane().add(jLabel3, new AnchorConstraint(405, 968, 432, 815, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jLabel3.setText("Current Location");
+				jLabel3.setText("Temperature");
 				jLabel3.setPreferredSize(new java.awt.Dimension(155, 19));
 			}
 			{
 				TableModel jTable2Model = 
 						new DefaultTableModel(
-								new String[][] { { "One", "Two" }, { "Three", "Four" } },
-								new String[] { "Column 1", "Column 2" });
+								new String[][] { { "1", "Unknown" } },
+								new String[] { "TagID", "Temperature" });
 				jTable2 = new JTable();
-				getContentPane().add(jTable2, new AnchorConstraint(449, 1000, 736, 815, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				JScrollPane scrollPane = new JScrollPane(jTable2);
+				getContentPane().add(scrollPane, new AnchorConstraint(449, 1000, 736, 815, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				jTable2.setModel(jTable2Model);
 				jTable2.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 				jTable2.setPreferredSize(new java.awt.Dimension(188, 203));
@@ -149,6 +159,16 @@ public class MainUI extends javax.swing.JFrame {
 					jMenuBar1.add(jMenu1);
 					jMenu1.setText("File");
 				}
+				{
+					jMenu2 = new JMenu();
+					jMenuBar1.add(jMenu2);
+					jMenu2.setText("Setting");
+				}
+				{
+					jMenu3 = new JMenu();
+					jMenuBar1.add(jMenu3);
+					jMenu3.setText("About");
+				}
 			}
 			pack();
 			this.setSize(1024, 768);
@@ -157,5 +177,27 @@ public class MainUI extends javax.swing.JFrame {
 			e.printStackTrace();
 		}
 	}
+
+	public void onLocationChange(final int id, Map<Integer, Double> distanceMap,
+			double[] gyro,final Point2D p,boolean onDangerousZone) {
+		lChart.updateLocation(id, p,onDangerousZone);
+		SwingUtilities.invokeLater(new Runnable() {
+		    public void run() {
+		    	String location=p.getX()+","+p.getY();
+		    	jTextArea1.append("Location:("+location+") TagID:"+id+"\n");
+		    	DefaultTableModel dm = (DefaultTableModel) jTable1.getModel();
+		    	int rowCount=dm.getRowCount();
+		    	for (int i = 0;i<rowCount;i++) {
+		    	    dm.removeRow(i);
+		    	}
+		    	Object []data={String.valueOf(id),location};
+		    	dm.insertRow(0, data);
+		    }
+		});
+		
+	}
+
+	
+
 
 }

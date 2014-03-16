@@ -37,7 +37,7 @@ public class LoginUI extends javax.swing.JFrame {
 	private JTextField jTextField2;
 	private JLabel Password;
 	private JLabel jLabel1;
-
+	private MainUI mainUI=null;
 	/**
 	* Auto-generated main method to display this JFrame
 	*/
@@ -99,7 +99,7 @@ public class LoginUI extends javax.swing.JFrame {
 					public void actionPerformed(ActionEvent evt) {
 						
 						dispose();
-						MainUI mainUI=new MainUI();
+						
 						mainUI.setVisible(true);
 					}
 				});
@@ -121,6 +121,14 @@ public class LoginUI extends javax.swing.JFrame {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public MainUI getMainUI() {
+		return mainUI;
+	}
+
+	public void setMainUI(MainUI mainUI) {
+		this.mainUI = mainUI;
 	}
 	
 	
