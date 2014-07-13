@@ -19,14 +19,12 @@ public class App
     {
     	loadConfig(args);
     	Locater locater=new Locater();
-    	//locater.initLocater();
+    	locater.initLocater();
     	MainUI mainInst=new MainUI();
     	locater.setLocationEventListener(mainInst);
     	LoginUI inst = new LoginUI();
     	inst.setMainUI(mainInst);
     	inst.setVisible(true);
-    	
-
     }
     
     private static void loadConfig(String []args)

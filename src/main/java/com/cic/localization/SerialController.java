@@ -2,9 +2,12 @@ package com.cic.localization;
 
 
 import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.log4j.Logger;
+
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
@@ -17,6 +20,11 @@ private static Logger logger = Logger.getLogger(SerialController.class);
 	private SerialPort serialPort=null;
 	private int lastSequence=-1;
 	private OnDataArrvialListener listener=null;
+	private DecimalFormat df = new DecimalFormat("#0.00");
+	private String truncateDouble(double d)
+	{
+		return df.format(d);
+	}
 	public void initCommunication()
 	{
 			try
@@ -63,17 +71,20 @@ private static Logger logger = Logger.getLogger(SerialController.class);
 	{
 		
 			InputStream inputStream=null;
-			byte[] readBuffer = new byte[44];
+			byte[] readBuffer = new byte[48];
 			int numBytesRead=0;
 			int tagID=0;
 			try 
 			{
 				inputStream = serialPort.getInputStream();
-				
-				if (inputStream.available() >= 44) 
+				if (inputStream.available() >= 48) 
 				{
 					numBytesRead = inputStream.read(readBuffer);
-		        } 
+		        }
+				else
+				{
+					return;
+				}
 			}
 			catch (Exception e) 
 			{
@@ -85,7 +96,6 @@ private static Logger logger = Logger.getLogger(SerialController.class);
 				try
 				{
 					inputStream.close();
-					
 				}
 				catch(Exception e)
 				{
@@ -93,86 +103,154 @@ private static Logger logger = Logger.getLogger(SerialController.class);
 				}
 			}
 			logger.debug("Read Bytes From Serial Port:"+numBytesRead);
-			if(numBytesRead!=44)
+			if(numBytesRead!=48)
 			{
 				logger.error("Data From Serial Port Seems Bad! Give Up");
 				return;
 			}
-			tagID=readBuffer[1]&0XFF;
-			Map<Integer,Double> distanceMap=new HashMap<Integer,Double>();
-			for(int t=0;t<4;t++)
+			int magicNum=readBuffer[0]& 0x000000FF;
+			if(magicNum!=0xa5)
 			{
-					int n=t*5+2;
-					int anchorID=readBuffer[n]&0XFF;
-					anchorID=anchorID%112;
-					int distance=0;
-		            distance = readBuffer[n + 4];
-		            distance &= 0xff;
-		            distance |= ((long) readBuffer[n + 3] << 8);
-		            distance &= 0xffff;
-		            distance |= ((long) readBuffer[n + 2] << 16);
-		            distance &= 0xffffff;
-		            distance |= ((long) readBuffer[n + 1] << 24);
-		            double distanceD=Float.intBitsToFloat(distance);
-		            logger.debug("Tag="+tagID+":Distance between anchor "+anchorID+" :"+(distanceD));       
-		            distanceMap.put(anchorID, distanceD);
+				logger.error("Magic Num Data From Serial Port Seems Bad! Give Up");
+				return;
 			}
+			tagID=readBuffer[1]&0x000000FF;
+			int sequence=0;
+			sequence=readBuffer[3];
+			sequence &= 0xff;
+			sequence|=((long)readBuffer[2] << 8);
+			//logger.info("Sequence:"+sequence);
 			int tempX=0;
-			tempX=readBuffer[25];
+			tempX=readBuffer[4];
 			tempX &= 0xff;
-			tempX |= ((long) readBuffer[24] << 8);
+			tempX |= ((long) readBuffer[5] << 8);
 			tempX &= 0xffff;
-			tempX |= ((long) readBuffer[23] << 16);
+			tempX |= ((long) readBuffer[6] << 16);
 			tempX &= 0xffffff;
-			tempX |= ((long) readBuffer[22] << 24);
+			tempX |= ((long) readBuffer[7] << 24);
 			double positionFromTagX=Float.intBitsToFloat(tempX);
 			int tempY=0;
-			tempY=readBuffer[29];
+			tempY=readBuffer[8];
 			tempY &= 0xff;
-			tempY |= ((long) readBuffer[28] << 8);
+			tempY |= ((long) readBuffer[9] << 8);
 			tempY &= 0xffff;
-			tempY |= ((long) readBuffer[27] << 16);
+			tempY |= ((long) readBuffer[10] << 16);
 			tempY &= 0xffffff;
-			tempY |= ((long) readBuffer[26] << 24);
+			tempY |= ((long) readBuffer[11] << 24);
 			double positionFromTagY=Float.intBitsToFloat(tempY);
-			int gyro=0;
-			gyro=readBuffer[33];
-			gyro &= 0xff;
-			gyro |= ((long) readBuffer[32] << 8);
-			gyro &= 0xffff;
-			gyro |= ((long) readBuffer[31] << 16);
-			gyro &= 0xffffff;
-			gyro |= ((long) readBuffer[30] << 24);
-			double gyroX=Float.intBitsToFloat(gyro);
-			gyro=0;
-			gyro=readBuffer[37];
-			gyro &= 0xff;
-			gyro |= ((long) readBuffer[36] << 8);
-			gyro &= 0xffff;
-			gyro |= ((long) readBuffer[35] << 16);
-			gyro &= 0xffffff;
-			gyro |= ((long) readBuffer[34] << 24);
-			double gyroY=Float.intBitsToFloat(gyro);
-			gyro=0;
-			gyro=readBuffer[41];
-			gyro &= 0xff;
-			gyro |= ((long) readBuffer[40] << 8);
-			gyro &= 0xffff;
-			gyro |= ((long) readBuffer[39] << 16);
-			gyro &= 0xffffff;
-			gyro |= ((long) readBuffer[38] << 24);
-			double gyroZ=Float.intBitsToFloat(gyro);
-			int sequence=0;
-			sequence=readBuffer[43];
-			sequence &= 0xff;
-			sequence|=((long)readBuffer[42] << 8);
+			int tempTemp=0;
+			tempTemp=readBuffer[12];
+			tempTemp &= 0xff;
+			tempTemp |= ((long) readBuffer[13] << 8);
+			tempTemp &= 0xffff;
+			tempTemp |= ((long) readBuffer[14] << 16);
+			tempTemp &= 0xffffff;
+			tempTemp |= ((long) readBuffer[15] << 24);
+			double temperature=Float.intBitsToFloat(tempTemp);
+			int tempVoltage=0;
+			tempVoltage=readBuffer[16];
+			tempVoltage &= 0xff;
+			tempVoltage |= ((long) readBuffer[17] << 8);
+			tempVoltage &= 0xffff;
+			tempVoltage |= ((long) readBuffer[18] << 16);
+			tempVoltage &= 0xffffff;
+			tempVoltage |= ((long) readBuffer[19] << 24);
+			double voltage=Float.intBitsToFloat(tempVoltage);	
+			int tempAngle=0;
+			tempAngle=readBuffer[20];
+			tempAngle &= 0xff;
+			tempAngle |= ((long) readBuffer[21] << 8);
+			tempAngle &= 0xffff;
+			tempAngle |= ((long) readBuffer[22] << 16);
+			tempAngle &= 0xffffff;
+			tempAngle |= ((long) readBuffer[23] << 24);
+			double angle=Float.intBitsToFloat(tempAngle);
+			int tempDistance=0;
+			tempDistance=readBuffer[24];
+			tempDistance &= 0xff;
+			tempDistance |= ((long) readBuffer[25] << 8);
+			tempDistance &= 0xffff;
+			tempDistance |= ((long) readBuffer[26] << 16);
+			tempDistance &= 0xffffff;
+			tempDistance |= ((long) readBuffer[27] << 24);
+			double distance1=Float.intBitsToFloat(tempDistance);
+			
+			tempDistance=readBuffer[28];
+			tempDistance &= 0xff;
+			tempDistance |= ((long) readBuffer[29] << 8);
+			tempDistance &= 0xffff;
+			tempDistance |= ((long) readBuffer[30] << 16);
+			tempDistance &= 0xffffff;
+			tempDistance |= ((long) readBuffer[31] << 24);
+			double distance2=Float.intBitsToFloat(tempDistance);
+			tempDistance=readBuffer[32];
+			tempDistance &= 0xff;
+			tempDistance |= ((long) readBuffer[33] << 8);
+			tempDistance &= 0xffff;
+			tempDistance |= ((long) readBuffer[34] << 16);
+			tempDistance &= 0xffffff;
+			tempDistance |= ((long) readBuffer[35] << 24);
+			double distance3=Float.intBitsToFloat(tempDistance);
+			tempDistance=readBuffer[36];
+			tempDistance &= 0xff;
+			tempDistance |= ((long) readBuffer[37] << 8);
+			tempDistance &= 0xffff;
+			tempDistance |= ((long) readBuffer[38] << 16);
+			tempDistance &= 0xffffff;
+			tempDistance |= ((long) readBuffer[39] << 24);
+			double distance4=Float.intBitsToFloat(tempDistance);
+			int tempVelocity=0;
+			tempVelocity=readBuffer[40];
+			tempVelocity &= 0xff;
+			tempVelocity |= ((long) readBuffer[41] << 8);
+			tempVelocity &= 0xffff;
+			tempVelocity |= ((long) readBuffer[42] << 16);
+			tempVelocity &= 0xffffff;
+			tempVelocity |= ((long) readBuffer[43] << 24);
+			double velocity1=Float.intBitsToFloat(tempVelocity);
+		
+			tempVelocity=readBuffer[44];
+			tempVelocity &= 0xff;
+			tempVelocity |= ((long) readBuffer[45] << 8);
+			tempVelocity &= 0xffff;
+			tempVelocity |= ((long) readBuffer[46] << 16);
+			tempVelocity &= 0xffffff;
+			tempVelocity |= ((long) readBuffer[47] << 24);
+			double velocity2=Float.intBitsToFloat(tempVelocity);
 			if(lastSequence!=sequence)
 			{
 				lastSequence=sequence;
 				if(listener!=null)
 				{
-					double gyroData[]={gyroX,gyroY,gyroZ};
-					listener.handleSerialData(tagID, distanceMap, gyroData);
+					StringBuilder builder=new StringBuilder();
+					builder.append(sequence);
+					builder.append(",");
+					builder.append(tagID);
+					builder.append(",");
+					builder.append(truncateDouble(distance1));
+					builder.append(",");
+					builder.append(truncateDouble(distance2));
+					builder.append(",");
+					builder.append(truncateDouble(distance3));
+					builder.append(",");
+					builder.append(truncateDouble(distance4));
+					builder.append(",");
+					builder.append(truncateDouble(velocity1));
+					builder.append(",");
+					builder.append(truncateDouble(velocity2));
+					builder.append(",");
+					builder.append(truncateDouble(positionFromTagX));
+					builder.append(",");
+					builder.append(truncateDouble(positionFromTagY));
+					builder.append(",");
+					builder.append(truncateDouble(temperature));
+					builder.append(",");
+					builder.append(truncateDouble(voltage));
+					builder.append(",");
+					builder.append(truncateDouble(angle));
+					logger.info(builder.toString());
+					//logger.info(sequence+","+tagID+distance1+","+distance2+","+distance3+","+distance4+","+velocity1+","+velocity2+","+tagID+","+positionFromTagX+","+positionFromTagY+","+temperature+","+voltage+","+angle);
+					listener.handleSerialData(tagID, positionFromTagX, positionFromTagY, temperature, voltage, angle);
 				}
 				//this.handleDataFromSerialPort(tagID, distanceMap, positionFromTagX, positionFromTagY,gyroX,gyroY,gyroZ,sequence);
 			}

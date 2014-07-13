@@ -10,8 +10,8 @@ import java.util.Set;
 import com.cic.localization.algorithm.LocationCalculator;
 
 public class Locater implements OnDataArrvialListener{
-	Map<Integer,LocationCalculator> locationCaluators=null;
-	Map<Integer, Map<Integer,Double>> lastDistances=null; 
+	//Map<Integer,LocationCalculator> locationCaluators=null;
+	//Map<Integer, Map<Integer,Double>> lastDistances=null; 
 	SerialController serialController=null;
 	LocationEventListener el=null;
 	public Locater()
@@ -21,13 +21,13 @@ public class Locater implements OnDataArrvialListener{
 	
 	public void initLocater()
 	{
-		locationCaluators=new HashMap<Integer,LocationCalculator>();
-		lastDistances=new HashMap<Integer,Map<Integer,Double>>();
+		//locationCaluators=new HashMap<Integer,LocationCalculator>();
+		//lastDistances=new HashMap<Integer,Map<Integer,Double>>();
 		serialController=new SerialController();
 		serialController.setListener(this);
 		serialController.initCommunication();
 	}
-	public void handleSerialData(int id, Map<Integer, Double> distanceMap,
+	/*public void handleSerialData(int id, Map<Integer, Double> distanceMap,
 			double[] gyro) {
 		if(lastDistances.containsKey(id))
 		{
@@ -52,12 +52,12 @@ public class Locater implements OnDataArrvialListener{
 			}
 			el.onLocationChange(id,distanceMap,gyro,result,false);
 		}
-	}
+	}*/
 	
-	private void writeResultToDatabase(int id, Map<Integer, Double> distanceMap,double[] gyro,Point2D p)
+	/*private void writeResultToDatabase(int id, Map<Integer, Double> distanceMap,double[] gyro,Point2D p)
 	{
 		
-	}
+	}*/
 	
 	private boolean isInDangerousZone(Point2D p)
 	{
@@ -75,7 +75,7 @@ public class Locater implements OnDataArrvialListener{
 		return false;
 	}
 	
-	public void lowpassFilter(Map<Integer,Double> last,Map<Integer,Double> now)
+	/*public void lowpassFilter(Map<Integer,Double> last,Map<Integer,Double> now)
 	{
 		Set<Integer> keys=last.keySet();
 		Iterator<Integer> it=keys.iterator();
@@ -89,7 +89,7 @@ public class Locater implements OnDataArrvialListener{
 			else if(lvalue-nvalue>1) nvalue=lvalue-1;
 			now.put(tid, nvalue);
 		}
-	}
+	}*/
 
 	public LocationEventListener getLocationEventListener() {
 		return el;
@@ -97,6 +97,22 @@ public class Locater implements OnDataArrvialListener{
 
 	public void setLocationEventListener(LocationEventListener el) {
 		this.el = el;
+	}
+
+	public void handleSerialData(int id, double locationX, double locationY,
+			double temperature, double voltage, double angle) {
+		
+		//writeResultToDatabase(id,distanceMap,angle,result);
+		if(el!=null)
+		{
+			Point2D result=new Point2D.Double(locationX,locationY);
+			if(isInDangerousZone(result))
+			{
+				el.onLocationChange(id, result, angle, true);
+			}
+			el.onLocationChange(id, result, angle, false);
+		}
+		
 	}
 	
 }

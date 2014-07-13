@@ -2,6 +2,7 @@ package com.cic.localization;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Point2D;
+import java.text.DecimalFormat;
 import java.util.Map;
 
 import com.cloudgarden.layout.AnchorConstraint;
@@ -49,7 +50,7 @@ public class MainUI extends javax.swing.JFrame implements LocationEventListener{
 	private JLabel jLabel3;
 	private JMenu jMenu3;
 	private JMenu jMenu2;
-
+	private DecimalFormat df = new DecimalFormat("#0.00");
 	private JTable jTable2;
 	private JTextArea jTextArea1;
 	private JTable jTable1;
@@ -63,6 +64,10 @@ public class MainUI extends javax.swing.JFrame implements LocationEventListener{
 		initGUI();
 		setCloseListener();
 		//initChartPanel();
+	}
+	private String truncateDouble(double d)
+	{
+		return df.format(d);
 	}
 	
 	/*private void initChartPanel()
@@ -178,12 +183,11 @@ public class MainUI extends javax.swing.JFrame implements LocationEventListener{
 		}
 	}
 
-	public void onLocationChange(final int id, Map<Integer, Double> distanceMap,
-			double[] gyro,final Point2D p,boolean onDangerousZone) {
+	public void onLocationChange(final int id, final Point2D p, final double angle, boolean onDangerousZone) {
 		lChart.updateLocation(id, p,onDangerousZone);
 		SwingUtilities.invokeLater(new Runnable() {
 		    public void run() {
-		    	String location=p.getX()+","+p.getY();
+		    	String location=truncateDouble(p.getX())+","+truncateDouble(p.getY())+","+angle;
 		    	jTextArea1.append("Location:("+location+") TagID:"+id+"\n");
 		    	DefaultTableModel dm = (DefaultTableModel) jTable1.getModel();
 		    	int rowCount=dm.getRowCount();
@@ -194,6 +198,18 @@ public class MainUI extends javax.swing.JFrame implements LocationEventListener{
 		    	dm.insertRow(0, data);
 		    }
 		});
+		
+	}
+
+	
+
+	public void onVoltageChange(double voltage) {
+		
+		
+	}
+
+	public void onTemperatureChange(double temperature) {
+		// TODO Auto-generated method stub
 		
 	}
 

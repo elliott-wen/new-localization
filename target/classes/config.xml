@@ -38,6 +38,6 @@
 		</zone>
 	</DangerousZones>
 	<Chart>
-		<bgimg>c:/bg.jpg</bgimg>
+		<bgimg></bgimg>
 	</Chart>
 </configuration>

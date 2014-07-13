@@ -9,8 +9,11 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
@@ -33,14 +36,13 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 public class LocationChart {
 	
+	private Map<Integer,XYSeries> computerSeries=null;
 	
-	private XYSeries computerSeries=null;
-	private XYSeries oldComputerSeries=null;
 	private JFreeChart localJFreeChart=null;
 	private XYSeriesCollection xyseriescollection=null;
 	private XYPlot localXYPlot=null;
 	private ChartPanel localChartPanel=null;
-	private boolean isWarning=false;
+	
 	public ChartPanel initPanel()
 	{
 		createDataset();
@@ -59,6 +61,9 @@ public class LocationChart {
 	    localXYPlot.setNoDataMessage("NO DATA");
 	    localXYPlot.setDomainGridlinesVisible(true);
 	    localXYPlot.setRangeGridlinesVisible(true);   
+	    XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+        renderer.setSeriesLinesVisible(0, true);
+        localXYPlot.setRenderer(renderer);
 	    
 	}
 	private void drawDangerousZone()
@@ -86,12 +91,12 @@ public class LocationChart {
 	    Shape shape2 = new Rectangle2D.Double(-delta, -delta, size, size);
 	    Shape shape3 = new Rectangle2D.Double(-delta, -delta, size, size);
 	    Shape shape4 = new Rectangle2D.Double(-delta, -delta, size, size);
-	    Shape shape5 = new Ellipse2D.Double(-delta, -delta, size, size);
+	    //Shape shape5 = new Ellipse2D.Double(-delta, -delta, size, size);
 	    localXYPlot.getRenderer().setSeriesShape(0, shape1);
 	    localXYPlot.getRenderer().setSeriesShape(1, shape2);
 	    localXYPlot.getRenderer().setSeriesShape(2, shape3);
 	    localXYPlot.getRenderer().setSeriesShape(3, shape4);
-	    localXYPlot.getRenderer().setSeriesShape(4, shape5);
+	    //localXYPlot.getRenderer().setSeriesShape(4, shape5);
 	    
 	}
 	private void adjustRange()
@@ -118,6 +123,7 @@ public class LocationChart {
 	}
 	private void drawBackGround()
 	{
+		if(Config.CHARTBG!=null&&!Config.CHARTBG.isEmpty())
 		try {
 			localXYPlot.setBackgroundImage((ImageIO.read(new File(Config.CHARTBG))));
 		} catch (IOException e) {
@@ -128,8 +134,10 @@ public class LocationChart {
 	private void createDataset() 
     {
 	  //tagSeries = new XYSeries("Position from Tag"); 
-		  computerSeries = new XYSeries("New Position from Computer");
-		  oldComputerSeries =new XYSeries("Histroy Position from Computer");
+		computerSeries=new HashMap<Integer,XYSeries>();
+		
+		  //computerSeries = new XYSeries("New Position from Computer");
+		  //oldComputerSeries =new XYSeries("Histroy Position from Computer");
 		  xyseriescollection = new XYSeriesCollection();  
 		  Iterator<Entry<Integer,Point2D>> iter=Config.anchorPositionMap.entrySet().iterator();
 		  while(iter.hasNext())
@@ -140,8 +148,8 @@ public class LocationChart {
 			  xyseriescollection.addSeries(series);
 		  }           
 		  //xyseriescollection.addSeries(tagSeries);
-		  xyseriescollection.addSeries(computerSeries); 
-		  xyseriescollection.addSeries(oldComputerSeries); 
+		  //xyseriescollection.addSeries(computerSeries); 
+		  //xyseriescollection.addSeries(oldComputerSeries); 
 		  
 	}
 	public void createPanel()
@@ -160,47 +168,33 @@ public class LocationChart {
 	}
 	public void updateLocation(final int tagId,final Point2D point,final boolean warning)
 	{
-		SwingUtilities.invokeLater(new Runnable() {
-		    public void run() {
-		    	if(warning!=isWarning)
-		    	{
-		    		if(warning)
-		    		{
-		    			turnOnWarning();
-		    		}
-		    		else
-		    		{
-		    			turnOffWarning();
-		    		}
-		    		isWarning=warning;
-		    	}
-		    	if(computerSeries.getItemCount()>1)
-				  {
-					  for(int j=0;j<computerSeries.getItemCount();j++)
-					  {
-						  oldComputerSeries.add(computerSeries.getX(j),computerSeries.getY(j));
-						  computerSeries.clear();
-					  }
-				  }
-				  computerSeries.add(point.getX(), point.getY());
-		    }
-		});
+		
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+			    public void run() {
+			    	if(!computerSeries.containsKey(tagId))
+			    	{
+			    		XYSeries lcomputerSeries=new XYSeries("Current:"+tagId,false);
+			    		
+			    		computerSeries.put(tagId, lcomputerSeries);
+			    		
+			    		xyseriescollection.addSeries(lcomputerSeries); 
+			  		  	
+		
+			    	}
+			    	XYSeries lcomputerSeries=computerSeries.get(tagId);
+					lcomputerSeries.add(point.getX(), point.getY());
+			    }
+			});
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-	public void turnOnWarning()
-	{
-		double size = 30.0;
-	    double delta = size / 2.0;
-		Shape shape5 = new Ellipse2D.Double(-delta, -delta, size, size);
-		localXYPlot.getRenderer().setSeriesShape(4, shape5);
-		localXYPlot.getRenderer().setSeriesPaint( 0, Color.red);
-	}
-	public void turnOffWarning()
-	{
-		double size = 20.0;
-	    double delta = size / 2.0;
-		Shape shape5 = new Ellipse2D.Double(-delta, -delta, size, size);
-		localXYPlot.getRenderer().setSeriesShape(4, shape5);
-	}
+	
 	
 }
