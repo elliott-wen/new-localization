@@ -10,7 +10,7 @@ import java.util.Set;
 import com.cic.localization.algorithm.LocationCalculator;
 
 public class Locater implements OnDataArrvialListener{
-	//Map<Integer,LocationCalculator> locationCaluators=null;
+	Map<Integer,LocationCalculator> locationCaluators=null;
 	//Map<Integer, Map<Integer,Double>> lastDistances=null; 
 	SerialController serialController=null;
 	LocationEventListener el=null;
@@ -21,7 +21,7 @@ public class Locater implements OnDataArrvialListener{
 	
 	public void initLocater()
 	{
-		//locationCaluators=new HashMap<Integer,LocationCalculator>();
+		locationCaluators=new HashMap<Integer,LocationCalculator>();
 		//lastDistances=new HashMap<Integer,Map<Integer,Double>>();
 		serialController=new SerialController();
 		serialController.setListener(this);
@@ -99,11 +99,33 @@ public class Locater implements OnDataArrvialListener{
 		this.el = el;
 	}
 
-	public void handleSerialData(int id, double locationX, double locationY,
+	public void handleSerialData(int id, Map<Integer,Double> distanceMap, double velocity[],double locationX, double locationY,
 			double temperature, double voltage, double angle) {
-		
+		//System.out.println("Debug Symbol1");
 		//writeResultToDatabase(id,distanceMap,angle,result);
+		if(!locationCaluators.containsKey(id))
+		{
+			LocationCalculator locationCaluator=new LocationCalculator();
+			locationCaluator.setAnchorPositionMap(Config.anchorPositionMap);
+			locationCaluator.init();
+			locationCaluators.put(id, locationCaluator);
+		}
+		LocationCalculator lc=locationCaluators.get(id);
+		//System.out.println("Debug Symbol2");
+		Point2D result=lc.calculate(distanceMap, velocity);
+		//System.out.println(result);
+		//writeResultToDatabase(id,distanceMap,gyro,result);
 		if(el!=null)
+		{
+			if(isInDangerousZone(result))
+			{
+				el.onLocationChange(id,result,0,true);
+			}
+			el.onLocationChange(id,result,0,false);
+		}
+		
+		
+		/*if(el!=null)
 		{
 			Point2D result=new Point2D.Double(locationX,locationY);
 			if(isInDangerousZone(result))
@@ -111,7 +133,7 @@ public class Locater implements OnDataArrvialListener{
 				el.onLocationChange(id, result, angle, true);
 			}
 			el.onLocationChange(id, result, angle, false);
-		}
+		}*/
 		
 	}
 	

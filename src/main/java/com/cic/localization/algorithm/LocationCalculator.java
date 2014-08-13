@@ -27,11 +27,11 @@ public class LocationCalculator {
 	private RealMatrix matrixH=null;
 	private RealMatrix matrixI=null;
 	private RealMatrix matrixER=null;
-	private double defaultA[][]={{1,0,0,updateFrequency,0},{ 0,1,0,0,updateFrequency},{0,0,1,0,0,updateFrequency},{ 0,0,0,1,0,0}, {0,0,0,0,1,0},{0,0,0,0,0,1}};
+	private double defaultA[][]={{1,0,0,updateFrequency,0,0},{ 0,1,0,0,updateFrequency,0},{0,0,1,0,0,updateFrequency},{ 0,0,0,1,0,0}, {0,0,0,0,1,0},{0,0,0,0,0,1}};
 	private double defaultR[]={2,2,2,2,0.2,0.2,0.01};
 	private double defaultQ[]={2,2,2,0.5,0.5,0.01};
-	private double defaultX[]={14.01,0.01,0.01,0.01,0.01,0.01};
-	private double defaultP[]={0.000001,0.000001,0.000001,0.000001,0.000001,0.000001};
+	private double defaultX[]={0.01,0.01,0.01,0.01,0.01,0.01};
+	private double defaultP[]={1000000,1000000,1000000,1000000,1000000,1000000};
 	private double defaultH[][]={{1,1,1,0,0,0},{1,1,1,0,0,0},{1,1,1,0,0,0},{1,1,1,0,0,0},{ 0,0,0,1,0,0 },{0,0,0,0,1,0},{0,0,0,0,0,1}};
 	private double defaultER[]={0,0,0,0};
 	private Map<Integer,Double> systemDistance=null;
@@ -71,25 +71,35 @@ public class LocationCalculator {
 		Iterator<Integer> keyIt=distanceData.keySet().iterator();
 		matrixR=MatrixUtils.createRealDiagonalMatrix(defaultR);
 		this.matrixX=this.matrixA.multiply(this.matrixX);
+		
 		this.matrixP=this.matrixA.multiply(this.matrixP).multiply(this.matrixA.transpose()).add(this.matrixQ);
+		
 		this.matrixH=MatrixUtils.createRealMatrix(defaultH);
 		keyIt=distanceData.keySet().iterator();
+		//System.out.println(matrixX);
 		for(int j=0;j<distanceData.size();j++)
 		{
 				Integer key=keyIt.next();
 				Point2D lp=anchorPositionMap.get(key);
-				double temp=Math.sqrt(Math.pow(matrixX.getEntry(0, 0)-lp.getX(), 2)+Math.pow(matrixX.getEntry(1, 0)-lp.getY(), 2));
+				double temp=Math.sqrt(Math.pow(matrixX.getEntry(0, 0)-lp.getX(), 2)+Math.pow(matrixX.getEntry(1, 0)-lp.getY(), 2)+Math.pow(matrixX.getEntry(2, 0)-0, 2));
+				//System.out.println(temp);
 				this.systemDistance.put(key, temp);
+				//System.out.println(matrixX.getEntry(0, 0)-lp.getX());
 				double h1=(matrixX.getEntry(0, 0)-lp.getX())/temp;
+				//System.out.println(matrixX.getEntry(0, 0)+"-"+lp.getX()+"-"+temp+"-"+h1);
 				this.matrixH.setEntry(j,0,h1);
 				double h2=(matrixX.getEntry(1, 0)-lp.getY())/temp;
 				this.matrixH.setEntry(j,1,h2);
 				this.matrixH.setEntry(j, 2, 0);
+				//System.out.println(h1+":"+h2);
 				//==============
+				//System.out.println(temp);
+				//System.out.println(key+":"+Math.abs(temp-distanceData.get(key)));
 				this.matrixER.setEntry(0, j, Math.abs(temp-distanceData.get(key)));
 				if(this.matrixER.getEntry(0, j)>1)
 				{
 					this.matrixR.setEntry(j, j,this.matrixER.getEntry(0, j)*this.matrixER.getEntry(0, j));
+					
 					if(distanceData.get(key)<5)
 					{
 						this.matrixR.setEntry(j, j,0.1*distanceData.get(key));
@@ -101,10 +111,14 @@ public class LocationCalculator {
 				}
 				//===============
 		}
+		//System.out.println(matrixER);
+		//System.out.println(matrixH);
 		/*double h53=-this.matrixX.getEntry(3, 0)/(Math.pow(this.matrixH.getEntry(2, 0), 2)+Math.pow(this.matrixH.getEntry(3, 0), 2));
 		this.matrixH.setEntry(4, 2, h53);
 		double h54=this.matrixX.getEntry(2, 0)/(Math.pow(this.matrixH.getEntry(2, 0), 2)+Math.pow(this.matrixH.getEntry(3, 0), 2));
 		this.matrixH.setEntry(4, 3, h54);*/
+		//System.out.println(matrixER);
+	
 		RealMatrix dominate=this.matrixH.multiply(this.matrixP).multiply(this.matrixH.transpose()).add(this.matrixR);
 		RealMatrix dominateInv=new LUDecomposition(dominate).getSolver().getInverse();
 		this.matrixK=this.matrixP.multiply(this.matrixH.transpose()).multiply(dominateInv);
@@ -119,10 +133,11 @@ public class LocationCalculator {
 			Integer key=keyIt.next();
 			z[tj]=distanceData.get(key);
 		}
-		z[tj+1]=velocity[0];
-		z[tj+2]=velocity[1];
-		z[tj+3]=velocity[2];
+		z[tj]=velocity[0];
+		z[tj+1]=velocity[1];
+		z[tj+2]=velocity[2];
 		RealMatrix matrixtinZ=MatrixUtils.createColumnRealMatrix(z);
+		
 		keyIt=distanceData.keySet().iterator();
 		double h[]=new double[distanceData.size()+3];
 		h[h.length-1]=this.matrixX.getEntry(5, 0);
@@ -135,17 +150,19 @@ public class LocationCalculator {
 		}
 		RealMatrix matrixtinH=MatrixUtils.createColumnRealMatrix(h);
 		
-		
-		this.matrixX=this.matrixX.add(this.matrixK.multiply(matrixtinZ.subtract(matrixtinH)));
+		RealMatrix matrixE=matrixtinZ.subtract(matrixtinH);
+		//System.out.println(matrixE);
+		this.matrixX=this.matrixX.add(this.matrixK.multiply(matrixE));
+		//System.out.println(matrixX);
 		this.matrixP=this.matrixI.subtract(this.matrixK.multiply(this.matrixH)).multiply(this.matrixP);
 		Point2D point=new Point2D.Double(matrixX.getEntry(0, 0),matrixX.getEntry(1, 0));
 		return point;
 		
 	}
 	
-	/*public void main(String args[])
+/*	public static void main(String args[])
 	{
-		Localization l=new Localization();
+		LocationCalculator l=new LocationCalculator();
 		l.init();
 		Map<Integer,Point2D> anchorMap=new HashMap<Integer,Point2D>();
 		anchorMap.put(1, new Point2D.Double(0,0));
@@ -153,18 +170,20 @@ public class LocationCalculator {
 		anchorMap.put(3, new Point2D.Double(100,100));
 		anchorMap.put(4, new Point2D.Double(0,100));
 		l.setAnchorPositionMap(anchorMap);
-		for(int j=0;j<200;j+=1)
+		for(int j=0;j<10;j+=1)
 		{
 			Map<Integer,Double> distanceMap=new HashMap<Integer,Double>();
-			Point2D np=new Point2D.Double((double)(j)*0.5,(double)(j)*0.5);
+			Point2D np=new Point2D.Double(50.0,50.0);
 			System.out.println("Current Point:"+np.getX()+" "+np.getY());
 			for(int i=1;i<=4;i++)
 			{
 				distanceMap.put(i,np.distance(anchorMap.get(i)));
+				
 				//System.out.print("Distance between "+i+":"+distanceMap.get(i));
 			}
-			Point2D cp=l.calculate(distanceMap, 45);
-			//System.out.println();
+			double v[]={0,0,0};
+			Point2D cp=l.calculate(distanceMap,v);
+			System.out.println();;
 			System.out.println("Result:"+cp.getX()+" "+cp.getY());
 		}
 	}*/

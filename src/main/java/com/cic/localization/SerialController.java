@@ -249,8 +249,15 @@ private static Logger logger = Logger.getLogger(SerialController.class);
 					builder.append(",");
 					builder.append(truncateDouble(angle));
 					logger.info(builder.toString());
+					double velocity[]={velocity1, velocity2,0};
+					Map<Integer,Double> distanceMap =new HashMap<Integer,Double>();
+					distanceMap.put(1, distance1);
+					distanceMap.put(2, distance2);
+					distanceMap.put(3, distance3);
+					distanceMap.put(4, distance4);
+					if(distance1==-1||distance2==-1||distance3==-1||distance4== -1) return;
 					//logger.info(sequence+","+tagID+distance1+","+distance2+","+distance3+","+distance4+","+velocity1+","+velocity2+","+tagID+","+positionFromTagX+","+positionFromTagY+","+temperature+","+voltage+","+angle);
-					listener.handleSerialData(tagID, positionFromTagX, positionFromTagY, temperature, voltage, angle);
+					listener.handleSerialData(tagID, distanceMap, velocity,positionFromTagX, positionFromTagY, temperature, voltage, angle);
 				}
 				//this.handleDataFromSerialPort(tagID, distanceMap, positionFromTagX, positionFromTagY,gyroX,gyroY,gyroZ,sequence);
 			}
